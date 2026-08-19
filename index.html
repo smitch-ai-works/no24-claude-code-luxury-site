@@ -236,12 +236,21 @@ html,body{max-width:100%;overflow-x:hidden}
 .fk-checklist{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
 .fk-checklist span{font-size:12.5px;font-weight:700;padding:5px 12px;border-radius:999px;
  background:var(--sk-surface);color:var(--sk-ink);border:1px solid var(--sk-line)}
+/* 折りたたみ式プロンプトボックス（2026-08-19〜）。長いプロンプトが常時全文
+   表示されるとページが間延びして最後まで読まれなくなる、との指摘で開閉式に変更。
+   コピーボタンはsummary内＝常に見える位置に置き、閉じたままコピーできるようにする。 */
 .fk-prompt{background:var(--sk-dark1);color:#E7E9EC;border-radius:12px;margin-top:12px;overflow:hidden}
 .fk-prompt-h{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 13px;
- border-bottom:1px solid rgba(255,255,255,.13);font-size:11px;letter-spacing:.06em}
-.fk-prompt-h span{color:var(--sk-hl);font-weight:900}
+ border-bottom:1px solid rgba(255,255,255,.13);font-size:11px;letter-spacing:.06em;cursor:pointer;
+ list-style:none}
+.fk-prompt-h::-webkit-details-marker{display:none}
+.fk-prompt-h>span:first-child{color:var(--sk-hl);font-weight:900;overflow:hidden;text-overflow:ellipsis;
+ white-space:nowrap}
+.fk-prompt-h-right{display:flex;align-items:center;gap:9px;flex:none}
 .fk-prompt-copy{background:rgba(255,255,255,.14);border:0;color:#fff;border-radius:999px;
  padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer}
+.fk-prompt-arrow{color:rgba(255,255,255,.55);font-size:11px;transition:transform .2s ease}
+.fk-prompt[open] .fk-prompt-arrow{transform:rotate(180deg)}
 .fk-prompt pre{margin:0;padding:14px;font-size:12px;line-height:1.95;white-space:pre-wrap;
  font-family:var(--sk-font);color:#DFE2E6}
 .fk-prompt pre i{font-style:normal;color:var(--sk-hl)}
@@ -328,7 +337,10 @@ html,body{max-width:100%;overflow-x:hidden}
 
 <header class="fk-hero">
  <div class="fk-hero-bg"><img src="assets/aura-desktop.jpg" alt="実際にこのページの手順で作った、黒基調の高級デスクスピーカー『AURA ONE』のスクロールサイト"></div>
+ 
  <h1>スクロールで動く高級サイトを、<br><em>Claude Codeで作る。</em></h1>
+ 
+ 
 </header>
 
 <section class="sk-sec">
@@ -381,14 +393,14 @@ html,body{max-width:100%;overflow-x:hidden}
    <div class="fk-step0-body">
     <p class="fk-step-text">Claude Codeは、Anthropic公式が配っているインストールコマンドで入れられます。お使いのOSに合わせて、どちらか1行をターミナルに貼り付けてください。インストール後、初めて「claude」と打って起動したときにブラウザが開き、ログインを求められます。案内に沿って進めばOKです。</p>
     <div class="fk-checklist"><span>Mac・Windowsどちらも対応</span><span>無料でインストールできる</span><span>初回起動時はブラウザでログイン</span><span>使うにはPro以上のプラン登録が必要</span></div>
-    <div class="fk-prompt">
-     <div class="fk-prompt-h"><span>Macの場合（ターミナル）</span><button class="fk-prompt-copy" type="button">コピー</button></div>
-     <pre>curl -fsSL https://claude.ai/install.sh | bash</pre>
-    </div>
-    <div class="fk-prompt">
-     <div class="fk-prompt-h"><span>Windowsの場合（PowerShell）</span><button class="fk-prompt-copy" type="button">コピー</button></div>
-     <pre>irm https://claude.ai/install.ps1 | iex</pre>
-    </div>
+    <details class="fk-prompt">
+      <summary class="fk-prompt-h"><span>Macの場合（ターミナル）</span><span class="fk-prompt-h-right"><button class="fk-prompt-copy" type="button">コピー</button><span class="fk-prompt-arrow">&#9662;</span></span></summary>
+      <pre>curl -fsSL https://claude.ai/install.sh | bash</pre>
+     </details>
+    <details class="fk-prompt">
+      <summary class="fk-prompt-h"><span>Windowsの場合（PowerShell）</span><span class="fk-prompt-h-right"><button class="fk-prompt-copy" type="button">コピー</button><span class="fk-prompt-arrow">&#9662;</span></span></summary>
+      <pre>irm https://claude.ai/install.ps1 | iex</pre>
+     </details>
    </div>
   </details>
  </div>
@@ -404,8 +416,8 @@ html,body{max-width:100%;overflow-x:hidden}
      <p class="fk-step-text">空のフォルダでClaude Codeを起動し、このプロンプトをそのまま送信します。技術構成・演出内容・デザインルールまで全部指定済みなので、あとはそのまま実装が進みます。長いプロンプトですが、省略せず全文貼ってください。</p>
      
      
-     <div class="fk-prompt">
-      <div class="fk-prompt-h"><span>サイト生成プロンプト</span><button class="fk-prompt-copy" type="button">コピー</button></div>
+     <details class="fk-prompt">
+      <summary class="fk-prompt-h"><span>サイト生成プロンプト</span><span class="fk-prompt-h-right"><button class="fk-prompt-copy" type="button">コピー</button><span class="fk-prompt-arrow">&#9662;</span></span></summary>
       <pre>高級プロダクトのプロモーションWebサイトを制作してください。
 
 Appleなどの世界的なプロダクトブランドに見られる、
@@ -614,7 +626,7 @@ npm run build
 
 まず設計を行い、
 その後実装まで進めてください。</pre>
-     </div>
+     </details>
      
     </div>
    </div>
@@ -626,8 +638,8 @@ npm run build
      <p class="fk-step-text">Claude Codeにデザインの参考画像を渡したい場合に使います。商品・アングル・背景・光・雰囲気の5要素を具体的に指定するのがコツです。</p>
      
      
-     <div class="fk-prompt">
-      <div class="fk-prompt-h"><span>商品ビジュアル生成プロンプト</span><button class="fk-prompt-copy" type="button">コピー</button></div>
+     <details class="fk-prompt">
+      <summary class="fk-prompt-h"><span>商品ビジュアル生成プロンプト</span><span class="fk-prompt-h-right"><button class="fk-prompt-copy" type="button">コピー</button><span class="fk-prompt-arrow">&#9662;</span></span></summary>
       <pre>架空のプレミアムデスクスピーカーの商品広告用ビジュアルを制作してください。
 
 商品名：
@@ -675,7 +687,7 @@ WebサイトのHeroセクションで使用できる、
 
 16:9。
 高解像度。</pre>
-     </div>
+     </details>
      
     </div>
    </div>
@@ -687,8 +699,8 @@ WebサイトのHeroセクションで使用できる、
      <p class="fk-step-text">画像をClaude Codeへドラッグ＆ドロップし、このプロンプトを送ります。画像を貼るだけでなく、素材感やライティングを3D表現に反映させるよう指示するのがポイントです。</p>
      
      
-     <div class="fk-prompt">
-      <div class="fk-prompt-h"><span>画像反映プロンプト</span><button class="fk-prompt-copy" type="button">コピー</button></div>
+     <details class="fk-prompt">
+      <summary class="fk-prompt-h"><span>画像反映プロンプト</span><span class="fk-prompt-h-right"><button class="fk-prompt-copy" type="button">コピー</button><span class="fk-prompt-arrow">&#9662;</span></span></summary>
       <pre>この画像を今回制作しているAURA ONEの
 デザインリファレンスとして使用してください。
 
@@ -715,7 +727,7 @@ Webサイト全体のライティングを
 プロダクト広告の表現を重視してください。
 
 サイトのレイアウトやスクロール構成は維持してください。</pre>
-     </div>
+     </details>
      
     </div>
    </div>
@@ -727,8 +739,8 @@ Webサイト全体のライティングを
      <p class="fk-step-text">ここまでで土台は完成です。あとは画面を見ながら「回転をもっとゆっくり」「反射を強くして」のように、気になったところをそのまま日本語で伝えるだけで仕上がっていきます。最後にこの最終チェック用プロンプトを送れば完成です。</p>
      
      
-     <div class="fk-prompt">
-      <div class="fk-prompt-h"><span>最終チェックプロンプト</span><button class="fk-prompt-copy" type="button">コピー</button></div>
+     <details class="fk-prompt">
+      <summary class="fk-prompt-h"><span>最終チェックプロンプト</span><span class="fk-prompt-h-right"><button class="fk-prompt-copy" type="button">コピー</button><span class="fk-prompt-arrow">&#9662;</span></span></summary>
       <pre>現在制作したWebサイトを
 実際にブラウザで開いて確認してください。
 
@@ -759,7 +771,7 @@ DesktopとMobileの両方をチェックしてください。
 npm run build
 
 も実行し、production buildが成功することを確認してください。</pre>
-     </div>
+     </details>
      
     </div>
    </div>
@@ -891,7 +903,9 @@ npm run build
 
 <script>
 document.querySelectorAll('.fk-prompt-copy').forEach(function(btn){
-  btn.addEventListener('click', function(){
+  btn.addEventListener('click', function(e){
+    e.preventDefault();
+    e.stopPropagation();
     var pre = btn.closest('.fk-prompt').querySelector('pre');
     navigator.clipboard.writeText(pre.textContent).then(function(){
       var t = btn.textContent; btn.textContent = '✓ コピー済み';
